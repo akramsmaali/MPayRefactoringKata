@@ -7,10 +7,12 @@ namespace WalletKata.Wallets
     public class WalletService
     {
         private readonly IUserSession _userSession;
+        private readonly WalletDAO _walletDao;
 
-        public WalletService(IUserSession userSession)
+        public WalletService(IUserSession userSession, WalletDAO walletDao)
         {
             _userSession = userSession;
+            _walletDao = walletDao;
         }
 
         public List<Wallet> GetWalletsByUser(User user)
@@ -32,7 +34,7 @@ namespace WalletKata.Wallets
 
                 if (isFriend)
                 {
-                    walletList = WalletDAO.FindWalletsByUser(user);
+                    walletList = _walletDao.FindWalletsByUser(user);
                 }
 
                 return walletList;

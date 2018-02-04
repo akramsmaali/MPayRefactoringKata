@@ -1,4 +1,7 @@
-﻿using NUnit.Framework;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Moq;
+using NUnit.Framework;
 using WalletKata.Users;
 using WalletKata.Exceptions;
 using WalletKata.Wallets;
@@ -9,13 +12,14 @@ namespace WalletKata.Test
     {
         private UserSessionMock _userSession;
         private WalletService _walletService;
+        private Mock<WalletDAO> _walletDaoMock;
 
         [SetUp]
         public void SetUp()
         {
             _userSession = new UserSessionMock();
-            _walletService = new WalletService(_userSession);
-
+            _walletDaoMock = new Mock<WalletDAO>();
+            _walletService = new WalletService(_userSession, _walletDaoMock.Object);
         }
 
 
@@ -36,14 +40,22 @@ namespace WalletKata.Test
    
 
         [Test]
-        public void GetWalletOf_Logged_Friend_Should_Call_FindWalletsByUser()
+        public void GetWalletOf_Logged_Friend_Should_Return_Users_Wallet()
         {
+            //create user and attach a friend to it
             var user = new User();
             var friend = new User();
             user.AddFriend(friend);
-
             _userSession.LoggedUser = friend;
-            Assert.Throws<ThisIsAStubException>(() => _walletService.GetWalletsByUser(user));
+
+            //create wallet and attach it to the user
+            var userWallet1 = new Wallet();
+            var userWallet2 = new Wallet();
+            var wallets = new List<Wallet>() {userWallet1,userWallet2};
+            _walletDaoMock.Setup(dao => dao.FindWalletsByUser(user)).Returns(wallets);
+
+            //walletService should return same list
+            CollectionAssert.AreEqual(_walletService.GetWalletsByUser(user), wallets);
         }
 
     }
