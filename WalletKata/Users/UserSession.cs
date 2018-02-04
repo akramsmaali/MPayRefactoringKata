@@ -1,19 +1,25 @@
+using System;
 using WalletKata.Exceptions;
 
 namespace WalletKata.Users
 {
-    public class UserSession
+    public class UserSession : IUserSession
     {
-        private static readonly UserSession userSession = new UserSession();
+        private static readonly UserSession _userSession = new UserSession();
 
         private UserSession() { }
 
         public static UserSession GetInstance()
         {
-            return userSession;
+            return _userSession;
         }
 
-        public User GetLoggedUser()
+        User IUserSession.GetLoggedUser()
+        {
+            return GetInstance().GetLoggedUserFromSession();
+        }
+
+        private User GetLoggedUserFromSession()
         {
             throw new ThisIsAStubException("UserSession.IsUserLoggedIn() should not be called in an unit test");
         }

@@ -5,16 +5,16 @@ namespace WalletKata.Users
 {
     public class User
     {
-        private List<User> friends = new List<User>();
+        private readonly List<User> _friends = new List<User>();
 
-        public IEnumerable GetFriends()
+        public IEnumerable<User> GetFriends()
         {
-            return friends;
+            return _friends;
         }
 
         public void AddFriend(User friend)
         {
-            friends.Add(friend);
+            _friends.Add(friend);
         }
     }
 }

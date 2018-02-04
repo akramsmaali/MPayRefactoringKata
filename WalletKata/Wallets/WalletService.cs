@@ -6,15 +6,22 @@ namespace WalletKata.Wallets
 {
     public class WalletService
     {
+        private readonly IUserSession _userSession;
+
+        public WalletService(IUserSession userSession)
+        {
+            _userSession = userSession;
+        }
+
         public List<Wallet> GetWalletsByUser(User user)
         {
             List<Wallet> walletList = new List<Wallet>();
-            User loggedUser = UserSession.GetInstance().GetLoggedUser();
-            bool isFriend = false;
+            var loggedUser = _userSession.GetLoggedUser();
+            var isFriend = false;
 
             if (loggedUser != null)
             {
-                foreach (User friend in user.GetFriends())
+                foreach (var friend in user.GetFriends())
                 {
                     if (friend.Equals(loggedUser))
                     {
